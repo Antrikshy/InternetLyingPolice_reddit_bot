@@ -28,10 +28,7 @@ Because this bot is open-source, I have not included the username and password f
 
 If you were to run this bot on your computer, here's what you would do:
 - **Install PRAW** (along with Python, of course) because my bot needs its features to run.
-- **Put InternetLyingPolice in some directory** and **make a .ini file** somewhere (I put it in the one-up folder on my computer). This configuration file should contain (on second thought, I have provided a sample called policebot.ini.dist which you can edit and rename):
-    [Authentication]
-    Username: "your_bot's_username"
-    Password: "your_bot's_password"
+- Edit the policebot.ini.dist and rename it to remove the .dist. Add a reddit username and password in the placeholders.
 - **Make changes on line 4** of InternetLyingPolice to point to the address of your .ini file.
 - Run the bot using this command from the directory you put it into:
     python InternetLyingPolice.py
