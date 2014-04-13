@@ -29,8 +29,8 @@ def main():
     phrases_to_look_for = ("this never happened", "lie on the Internet",
                            "OP is lying", "Internet and tell lies",
                            "Just Go On the Internet and Tell Lies?",
-                           "OP is a liar", "is a phony", "big fat phony",
-                           "is a liar")
+                           "is a phony", "big fat phony", "are a liar",
+                           "is a liar", "are a liar", "are lying")
 
     # Neverending loop to run bot continuously
     while (True):
@@ -61,10 +61,10 @@ def police_scanner(session, phrases):
     for scanning in comments:
         print >> sys.stderr, "Scanning comments..."
         comment_count += 1
+        green_light = True
         print >> sys.stderr, comment_count
         # Scan for each phrase
         for phrase in phrases:
-            green_light = True
             print >> sys.stderr, "Searching for phrases..."
             # If phrase found
             if phrase in scanning.body:
@@ -73,6 +73,7 @@ def police_scanner(session, phrases):
                     if reply.author.name == "InternetLyingPolice":
                         print >> sys.stderr, "Already replied."
                         green_light = False
+                        break
 
                 # If not already replied
                 if (green_light):
@@ -80,6 +81,9 @@ def police_scanner(session, phrases):
                     post_snarky_comment(scanning)
 
         # main() fetches more comments if this batch is done
+        # comment_stream seems to grab more than 1000 comments. I limited
+        # each batch to 1000 manually to keep things manageable in case I 
+        # expand
         if comment_count == 1000:
             break
 
