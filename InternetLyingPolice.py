@@ -1,5 +1,6 @@
 import praw             # For reddit API
 import sys              # Used for stderr message output
+import time             # To make the bot sleep
 import ConfigParser     # Used to read config file (for authentication)
 
 # Reading config file
@@ -12,10 +13,9 @@ username = config.get('Authentication', 'Username')
 password = config.get('Authentication', 'Password')
 
 user_agent = "InternetLyingPolice by /u/Antrikshy"
-snarky_sarcasm = "INTERNET POLICE! GET DOWN ON THE GROUND! \
+snarky_sarcasm = "Internet Police! Get down! \
                 \n\nAlleged liar please step forward with your hands \
                 above your head! \
-                \n\n---\
                 \n\n^^Just ^^a ^^silly, ^^in-development ^^bot ^^by \
                 ^^/u/Antrikshy."
 
@@ -30,12 +30,16 @@ def main():
                            "OP is lying", "Internet and tell lies",
                            "Just Go On the Internet and Tell Lies?",
                            "is a phony", "big fat phony", "are a liar",
-                           "is a liar", "are a liar", "are lying")
+                           "is a liar", "are lying")
 
     # Neverending loop to run bot continuously
     while (True):
         print >> sys.stderr, "Initializing scanner..."
         police_scanner(r, phrases_to_look_for)
+        # Sleeps for 15 seconds (seems to fix repeat commenting for now)
+        print >> sys.stderr, "Taking 15 second donut break..."
+        time.sleep(15)
+        print >> sys.stderr, "I'm full."
 
 ''' With a series of for-loops, this method reads comments from the 
     comment_stream and scans for phrases. For each fetched comment in a batch,
@@ -76,16 +80,18 @@ def police_scanner(session, phrases):
                         break
 
                 # If not already replied
-                if (green_light):
+                if (green_light == True):
                     print >> sys.stderr, "Something found!"
                     post_snarky_comment(scanning)
+                    print >> sys.stderr, "Posted sarcasm."
+                    break
 
         # main() fetches more comments if this batch is done
         # comment_stream seems to grab more than 1000 comments. I limited
         # each batch to 1000 manually to keep things manageable in case I 
         # expand
         if comment_count == 1000:
-            break
+            return;
 
 ''' Method that simply replies to the comment passed in as parameter '''
 ''' Parameters:

@@ -1,6 +1,8 @@
 /u/InternetLyingPolice
 ======================
-This is my first reddit bot. I created it to learn Python, PRAW and using APIs in general. **I have tried to document it so that it is easy for beginners to understand. I'm hoping that this code will be helpful to anyone learning to write their own first bot.**
+This is my first reddit bot. **I created it to learn Python, PRAW and using APIs in general.**
+
+**I have tried to document it so that it is easy for beginners to understand. I'm hoping that this code will be helpful to anyone learning to write their own first bot.**
 
 This is a simple example of a bot that scans all reddit comments as they come in. It looks for certain phrases in a comment (explained in the section "What it does") and makes a sarcastic reply.
 
@@ -36,7 +38,7 @@ If you were to run this bot on your computer, here's what you would do:
 Of course you shouldn't run this exact code from your computer without making any changes or we'll end up with two reddit bots doing the exact same thing and people will hate both of them.
 
 **Ways to help me out:**
-- **[High priority]** The bot sometimes comments twice (maybe when it looks at the same comment twice). Try to fix this.
+- **[High priority]** The bot may sometimes comments twice (maybe when it looks at the same comment twice; stderr suggests that it scans the same batch over and over at times). Try to look for any logic problems with the green_light boolean. For now, repeat commenting is prevented by making the bot sleep for 15 seconds, which may also cause it to miss comments.
 - Make efficiency improvements in this program (I'm almost certain it looks at some comments twice because it doesn't sleep).
 - Add more common phrases to look for.
 - Maybe add a way to make the bot *not* comment when someone says "not saying OP is lying, but..."
