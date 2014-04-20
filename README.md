@@ -2,11 +2,11 @@
 ======================
 This is my first reddit bot. **I created it to learn Python, PRAW and using APIs in general.**
 
-**I have tried to document it so that it is easy for beginners to understand. I'm hoping that this code will be helpful to anyone learning to write their own first bot.**
-
 This is a simple example of a bot that scans all reddit comments as they come in. It looks for certain phrases in a comment (explained in the section "What it does") and makes a sarcastic reply.
 
 Because this bot is built using PRAW (Python Reddit API Wrapper), it follows reddit's API guidelines automatically, not making too many API requests etc.
+
+**I have tried to document it so that it is easy for beginners to understand. I'm hoping that this code will be helpful to anyone learning to write their own first bot.**
 
 What it does
 ------------
