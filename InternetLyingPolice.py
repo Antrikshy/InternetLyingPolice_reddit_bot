@@ -64,6 +64,7 @@ def police_scanner(session, phrases):
                                                 limit = None, verbosity = 0)
     comment_count = 0   # Number of comments scanned (for stderr message)
 
+    raise HTTPError
     # Read each comment
     for scanning in comments:
         print >> sys.stderr, "Scanning comments..."
@@ -104,8 +105,8 @@ def post_snarky_comment(reply_to):
         print >> sys.stderr, "Posting sarcasm..."
         reply_to.reply(SNARKY_SARCASM)
 
-    except HTTPError as e:
-        print >> sys.stderr, "Got HttpError from reddit:" + e.code
+    except urllib2.HTTPError as e:
+        print >> sys.stderr, "Got HTTPError from reddit:" + e.code
         if e.code == 403:
             print >> sys.stderr, "Posting in restricted subreddit."
         print >> sys.stderr, "Nothing to see here. Moving on."
