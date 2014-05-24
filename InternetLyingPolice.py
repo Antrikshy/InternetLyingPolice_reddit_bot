@@ -17,6 +17,7 @@
 import praw             # For reddit API
 import sys              # Used for stderr message output
 import time             # To make the bot sleep
+import threading        # To run second thread that cleans up downvoted posts
 import urllib2          # To except HTTPError
 import ConfigParser     # Used to read config file (for authentication)
 
@@ -33,10 +34,8 @@ USER_AGENT = "InternetLyingPolice by /u/Antrikshy"
 SNARKY_SARCASM = "Internet Police! Get down! \
                 \n\nAlleged liar please step forward with your hands \
                 above your head! \
-                \n\n^^Just ^^a ^^silly, ^^in-development ^^bot ^^by \
-                ^^/u/Antrikshy. \
-                \n\n^^Currently, ^^it ^^may ^^not ^^run ^^24x7 ^^so \
-                ^^don't ^^try ^^to ^^play ^^with ^^it."
+                \n\n^^Just ^^a ^^silly ^^bot ^^by ^^/u/Antrikshy. \
+                \n\n^^Comments ^^now ^^deleted ^^if ^^people ^^hate ^^them."
 
 # All the cool stuff happens here
 def main():
@@ -44,6 +43,10 @@ def main():
     r = praw.Reddit(USER_AGENT)
     r.login(USERNAME, PASSWORD)
     print >> sys.stderr, "Logged in."
+
+    # Old comment scanner-deleter to delete <1 point comments every half hour
+    t = threading.Thread(target=delete_downvoted_posts, args=(r,))
+    t.start()
 
     phrases_to_look_for = ("this never happened", "lie on the Internet",
                            "OP is lying", "Internet and tell lies",
@@ -81,7 +84,6 @@ def police_scanner(session, phrases):
                                                 limit = None, verbosity = 0)
     comment_count = 0   # Number of comments scanned (for stderr message)
 
-    raise HTTPError
     # Read each comment
     for scanning in comments:
         print >> sys.stderr, "Scanning comments..."
@@ -118,18 +120,43 @@ def police_scanner(session, phrases):
 ''' Parameters:
     reply_to: Comment to reply to '''
 def post_snarky_comment(reply_to):
+    # Post comment
     try:
         print >> sys.stderr, "Posting sarcasm..."
         reply_to.reply(SNARKY_SARCASM)
 
+    # If reddit returns error (when bot tries to post in unauthorized sub)
     except urllib2.HTTPError as e:
         print >> sys.stderr, "Got HTTPError from reddit:" + e.code
         if e.code == 403:
             print >> sys.stderr, "Posting in restricted subreddit."
         print >> sys.stderr, "Nothing to see here. Moving on."
 
+    # To catch any other exception
     except Exception as e:
         print >> sys.stderr, "Got some non-HTTPError exception."
-    
+
+''' Method to delete old comments that have been downvoted. Scans last 25 
+    comments every half hour. '''
+''' Parameters:
+    session: The reddit session to use '''
+def delete_downvoted_posts(session):
+    while (True):
+        print >> sys.stderr, "\n" + "Starting old comments scanner."
+        # Get own account
+        my_account = session.get_redditor(USERNAME)
+        # Get last 25 comments
+        my_comments = my_account.get_comments(limit = 10)
+
+        # Delete all comments with <1 point
+        for old_comment in my_comments:
+            if old_comment.score <= 0:
+                print >> sys.stderr, "Found failed joke, deleting."
+                old_comment.delete()
+
+        # Sleep for half hour
+        print >> sys.stderr, "Turning down old comment scanner for 30 mins..."
+        time.sleep(1800)
+
 if __name__ == '__main__':
     main()
